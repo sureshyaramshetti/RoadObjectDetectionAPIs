@@ -20,7 +20,7 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # ✅ Copy only required folders
-COPY app ./app
+COPY main.py
 COPY model ./model
 
 EXPOSE 8000
