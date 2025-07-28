@@ -62,7 +62,7 @@ async def predict_video(file: UploadFile = File(...)):
     with open(input_path, "wb") as f:
         shutil.copyfileobj(file.file,f)
 
-    model = YOLO("model/best.pt")
+    model = YOLO("model/best.pt") 
 
     #run prediction
     results = model.predict(source= input_path, save=True, project=OUTPUT_DIR, name=video_id, save_txt=False, save_conf=True)
