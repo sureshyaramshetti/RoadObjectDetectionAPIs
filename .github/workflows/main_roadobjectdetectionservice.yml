@@ -68,4 +68,4 @@ jobs:
         with:
           app-name: 'RoadObjectDetectionService'
           slot-name: 'Production'
-          
+          package: '.' # <--- ADD THIS LINE!
