@@ -24,7 +24,7 @@ os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 # Load YOLO model
 try:
-    model_path = "../model/best.pt"
+    model_path = "model/best.pt"
     logger.info(f"Attempting to load model from {model_path}")
     model = YOLO(model_path)
     logger.info("Model loaded successfully.")
