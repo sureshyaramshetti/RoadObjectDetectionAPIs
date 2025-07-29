@@ -27,8 +27,7 @@ RUN pip install --upgrade pip
 # Install Python dependencies
 # Use --no-cache-dir to reduce image size
 # Crucially, we'll try to explicitly uninstall opencv-python if it gets pulled in by ultralytics
-RUN pip install --no-cache-dir -r requirements.txt && \
-    pip uninstall -y opencv-python || true  # Uninstall opencv-python if it was installed by ultralytics
+RUN pip install --no-cache-dir -r requirements.txt
 
 # ✅ Copy only required folders
 COPY . .

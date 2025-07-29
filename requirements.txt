@@ -51,6 +51,6 @@ ultralytics==8.3.170
 ultralytics-thop==2.0.14
 urllib3==2.5.0
 uvicorn==0.35.0
-opencv-python-headless==4.12.0.88
+opencv-python
 torch==2.7.1 --index-url https://download.pytorch.org/whl/cpu
 
