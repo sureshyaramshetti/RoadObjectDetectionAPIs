@@ -31,8 +31,7 @@ RUN pip install --no-cache-dir -r requirements.txt && \
     pip uninstall -y opencv-python || true  # Uninstall opencv-python if it was installed by ultralytics
 
 # ✅ Copy only required folders
-COPY main.py
-COPY model ./model
+COPY . .
 
 # Expose the port your FastAPI app listens on
 EXPOSE 8000
