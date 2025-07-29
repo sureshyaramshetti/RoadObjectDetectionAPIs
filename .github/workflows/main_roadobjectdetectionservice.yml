@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 env:
-  AZURE_WEBAPP_NAME: roadobjectdetections
+  AZURE_WEBAPP_NAME: roadobjectdetection
   AZURE_CONTAINER_REGISTRY: registryfastapi.azurecr.io # Ensure this is your full ACR login server name
   IMAGE_NAME: roadobjectdetection-image
   PYTHON_VERSION: '3.13.3'
