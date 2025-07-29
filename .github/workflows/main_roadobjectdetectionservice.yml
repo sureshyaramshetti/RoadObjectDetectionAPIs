@@ -7,15 +7,15 @@ on:
   workflow_dispatch:
 
 env:
-  AZURE_WEBAPP_NAME: roadobjectdetections # Replace with your App Service name
-  AZURE_CONTAINER_REGISTRY: registryfastapi.azurecr.io # Replace with your ACR name (e.g., myappacr.azurecr.io)
-  IMAGE_NAME: roadobjectdetection-image # Name for your Docker image
-  PYTHON_VERSION: '3.13.3' # Match your Dockerfile base image
+  AZURE_WEBAPP_NAME: roadobjectdetections
+  AZURE_CONTAINER_REGISTRY: registryfastapi.azurecr.io # Ensure this is your full ACR login server name
+  IMAGE_NAME: roadobjectdetection-image
+  PYTHON_VERSION: '3.13.3'
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    environment: production # Or your desired environment
+    environment: production
 
     steps:
     - name: Checkout code
@@ -24,12 +24,11 @@ jobs:
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
 
-    - name: Log in to Azure Container Registry
-      uses: docker/login-action@v3
+    # Use Azure Login action with Service Principal
+    - name: Azure Login
+      uses: azure/login@v1
       with:
-        registry: ${{ env.AZURE_CONTAINER_REGISTRY }}
-        username: ${{ secrets.ACR_USERNAME }} # Create this secret in GitHub
-        password: ${{ secrets.ACR_PASSWORD }} # Create this secret in GitHub
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
 
     - name: Build and push Docker image
       uses: docker/build-push-action@v5
@@ -37,14 +36,11 @@ jobs:
         context: .
         push: true
         tags: ${{ env.AZURE_CONTAINER_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
-        # Add build arguments if needed (e.g., for torch CPU-only if not handled by index-url)
-        # build-args: |
-        #   TORCH_INDEX_URL=https://download.pytorch.org/whl/cpu
 
     - name: Deploy to Azure Web App
       uses: azure/webapps-deploy@v2
       with:
         app-name: ${{ env.AZURE_WEBAPP_NAME }}
-        slot-name: 'production' # Or your staging slot
-        publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }} # Or use Azure Login Action
+        slot-name: 'production'
+        # No publish-profile needed here, as azure/login handles authentication
         images: '${{ env.AZURE_CONTAINER_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}'
