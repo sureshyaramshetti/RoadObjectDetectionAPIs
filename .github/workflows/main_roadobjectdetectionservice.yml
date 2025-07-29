@@ -7,15 +7,15 @@ on:
   workflow_dispatch:
 
 env:
-  AZURE_WEBAPP_NAME: roadobjectdetection
-  AZURE_CONTAINER_REGISTRY: registryfastapi.azurecr.io # Ensure this is your full ACR login server name
-  IMAGE_NAME: roadobjectdetection-image
-  PYTHON_VERSION: '3.13.3'
+  AZURE_WEBAPP_NAME: roadobjectdetection # Replace with your App Service name
+  AZURE_CONTAINER_REGISTRY: registryfastapi.azurecr.io # Replace with your ACR login server name (e.g., myappacr.azurecr.io)
+  IMAGE_NAME: roadobjectdetection-image # Name for your Docker image
+  PYTHON_VERSION: '3.13.3' # Match your Dockerfile base image
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    environment: production
+    environment: production # Or your desired environment
 
     steps:
     - name: Checkout code
@@ -30,17 +30,28 @@ jobs:
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
 
+    # Explicitly log in to ACR using the Service Principal's credentials
+    # This is crucial for docker buildx push to authenticate correctly
+    - name: Log in to Azure Container Registry
+      uses: docker/login-action@v3
+      with:
+        registry: ${{ env.AZURE_CONTAINER_REGISTRY }}
+        username: ${{ secrets.AZURE_CREDENTIALS.clientId }} # Use Service Principal's Client ID
+        password: ${{ secrets.AZURE_CREDENTIALS.clientSecret }} # Use Service Principal's Client Secret
+
+    # Build and push Docker image (authentication handled by docker/login-action)
     - name: Build and push Docker image
       uses: docker/build-push-action@v5
       with:
         context: .
         push: true
         tags: ${{ env.AZURE_CONTAINER_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+        # build-args: |
+        #   TORCH_INDEX_URL=https://download.pytorch.org/whl/cpu
 
     - name: Deploy to Azure Web App
       uses: azure/webapps-deploy@v2
       with:
         app-name: ${{ env.AZURE_WEBAPP_NAME }}
-        slot-name: 'production'
-        # No publish-profile needed here, as azure/login handles authentication
+        slot-name: 'production' # Or your staging slot
         images: '${{ env.AZURE_CONTAINER_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}'
