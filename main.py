@@ -240,7 +240,7 @@ def _predict_image_sync(
     logger.info(f"Running synchronous image prediction thread for: {input_path}")
     
     # Ensure the output directory for this specific run exists before YOLO saves to it
-    os.makedirs(output_dir_for_request, exist_ok=True) 
+    #os.makedirs(output_dir_for_request, exist_ok=True) 
     
     results = model_instance.predict(str(input_path), save=True, project=OUTPUT_DIR, name=str(output_dir_for_request.name), verbose=False)
     
