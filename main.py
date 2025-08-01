@@ -53,13 +53,11 @@ except Exception:
 @app.on_event("startup")
 async def startup_event():
     logger.info("FastAPI application startup event triggered.")
-    # Start the periodic cleanup task
-    cleanup_old_files() 
 
 
 # === Periodic Cleanup Task ===
 @repeat_every(seconds=900) # every 15 minutes
-def cleanup_old_files():
+async def cleanup_old_files():
     """Deletes files and directories older than 30 minutes from UPLOAD_DIR and OUTPUT_DIR."""
     logger.info("Initiating periodic cleanup of old files and directories.")
     now = time.time()
